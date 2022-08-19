@@ -6,7 +6,7 @@ Simple Unity Demo build on the Ajuna.SDK
 - Unity version 2021.3.7f1 
 
 ## Run
-- Run Substrate Node: [monthly-2022-07](https://github.com/paritytech/substrate/releases/tag/monthly-2022-08) in `--dev` mode
+- Run Substrate Node: [monthly-2022-08](https://github.com/paritytech/substrate/releases/tag/monthly-2022-08) in `--dev` mode
 - Open project
 - Open SubstrateDemo scene
 - Play project
