@@ -3,10 +3,10 @@ Simple Unity Demo build on the Ajuna.SDK
 
 ## Requirements
 - Download Unity [LINK](https://unity.com/download)
-- Unity version 2021.3.6f1 
+- Unity version 2021.3.7f1 
 
 ## Run
-- Run Substrate Node: [monthly-2022-07](https://github.com/paritytech/substrate/releases/tag/monthly-2022-07) in `--dev` mode
+- Run Substrate Node: [monthly-2022-07](https://github.com/paritytech/substrate/releases/tag/monthly-2022-08) in `--dev` mode
 - Open project
 - Open SubstrateDemo scene
 - Play project
