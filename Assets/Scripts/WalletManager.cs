@@ -113,6 +113,8 @@ public class WalletManager : Singleton<WalletManager>
             return false;
         }
 
+        WalletName = name;
+
         return true;
     }
 
@@ -130,6 +132,8 @@ public class WalletManager : Singleton<WalletManager>
         {
             return false;
         }
+
+        WalletName = name;
 
         return true;
     }
