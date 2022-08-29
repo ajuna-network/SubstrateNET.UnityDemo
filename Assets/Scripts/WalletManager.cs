@@ -35,7 +35,7 @@ public class WalletManager : Singleton<WalletManager>
     [SerializeField]
     public string SubscriptionUrl = "http://127.0.0.1:61752/ws";
 
-    public string PublicKey => _wallet.Account.Value;
+    public Account Account => _wallet.Account;
 
     private Wallet _wallet;
 

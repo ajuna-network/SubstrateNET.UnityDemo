@@ -72,7 +72,7 @@ public class WalletController : Singleton<WalletController>
         }
 
         var accountId32 = new AccountId32();
-        accountId32.Create(Utils.GetPublicKeyFrom(WalletManager.GetInstance().PublicKey));
+        accountId32.Create(WalletManager.GetInstance().Account.Bytes);
 
         var multiAddress = new EnumMultiAddress();
         multiAddress.Create(MultiAddress.Id, accountId32);
@@ -84,13 +84,13 @@ public class WalletController : Singleton<WalletController>
 
         var subscriptionId = await manager.Client.Author.SubmitAndWatchExtrinsicAsync(
                WalletManager.GetInstance().ActionExtrinsicUpdate,
-               BalancesCalls.TransferKeepAlive(multiAddress, baseCampactU128),
+               transferKeepAlive,
                WalletManager.GetInstance().Alice, new ChargeAssetTxPayment(0, 0), 64, CancellationToken.None);
     }
 
-    public void OnButtonLessClicked()
+    public async void OnButtonLessClicked()
     {
-        Debug.Log("No need your big bag, take it back!");
+        Debug.Log("No need big bag, take my coins back!");
     }
 
     public async Task Connect(bool flag)
@@ -112,7 +112,7 @@ public class WalletController : Singleton<WalletController>
             IsPooling = flag;
             Invoke("NodeInfoAsync", 0f);
             InvokeRepeating("SystemHealthAsync", 0f, 60f);
-            InvokeRepeating("PollAllHeadsAsync", 0f, 1f);
+            InvokeRepeating("PollAllHeadsAsync", 0f, 0.5f);
         }
         else
         {
@@ -152,7 +152,7 @@ public class WalletController : Singleton<WalletController>
     {
 
         txtWalletName.text = WalletManager.GetInstance().WalletName;
-        txtWalletAddress.text = WalletManager.GetInstance().PublicKey;
+        txtWalletAddress.text = WalletManager.GetInstance().Account.Value;
 
         if (_isPolling)
         {
@@ -189,7 +189,7 @@ public class WalletController : Singleton<WalletController>
 
                 // since block changed to a balances call
                 var accountId32 = new AccountId32();
-                accountId32.Create(Utils.GetPublicKeyFrom(WalletManager.GetInstance().PublicKey));
+                accountId32.Create(Utils.GetPublicKeyFrom(WalletManager.GetInstance().Account.Value));
                 var accountInfo = await manager.Client.SystemStorage.Account(accountId32, CancellationToken.None);
                 if (accountInfo != null && accountInfo.Data != null)
                 {
