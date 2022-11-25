@@ -151,7 +151,6 @@ public class MenuController : MonoBehaviour
 
             TxtBalanceTime.text = (float)stopWatch.ElapsedTicks / 10000 + " ms";
             _queryBalanceFlag = false;
-
         }
 
         PgbBalanceFiller.rectTransform.localScale = new Vector3((float)BalanceFiller / 6, 1f, 1f);

@@ -71,26 +71,37 @@ public class WalletController : Singleton<WalletController>
             Debug.Log("Not connected!");
         }
 
-        var accountId32 = new AccountId32();
-        accountId32.Create(WalletManager.GetInstance().Account.Bytes);
-
-        var multiAddress = new EnumMultiAddress();
-        multiAddress.Create(MultiAddress.Id, accountId32);
-
-        var baseCampactU128 = new BaseCom<U128>();
-        baseCampactU128.Create(100000000000000);
-
-        var transferKeepAlive = BalancesCalls.TransferKeepAlive(multiAddress, baseCampactU128);
-
-        var subscriptionId = await manager.Client.Author.SubmitAndWatchExtrinsicAsync(
-               WalletManager.GetInstance().ActionExtrinsicUpdate,
-               transferKeepAlive,
-               WalletManager.GetInstance().Alice, new ChargeAssetTxPayment(0, 0), 64, CancellationToken.None);
+        TransferBalance(WalletManager.GetInstance().Alice, WalletManager.GetInstance().Account, 100000000000000);
     }
 
     public async void OnButtonLessClicked()
     {
         Debug.Log("No need big bag, take my coins back!");
+        TransferBalance(WalletManager.GetInstance().Account, WalletManager.GetInstance().Alice, 10000000000);
+    }
+
+    public async void TransferBalance(Account senderAccount,Account recipientAccount,  long amount)
+    {
+        if (!manager.Client.IsConnected)
+        {
+            Debug.Log("Not connected!");
+        }
+        
+        var transferRecipient = new AccountId32();
+        transferRecipient.Create(recipientAccount.Bytes);
+        
+        var multiAddress = new EnumMultiAddress();
+        multiAddress.Create(MultiAddress.Id, transferRecipient);
+        
+        var baseCampactU128 = new BaseCom<U128>();
+        baseCampactU128.Create(amount);
+        
+        var transferKeepAlive = BalancesCalls.TransferKeepAlive(multiAddress, baseCampactU128);
+        
+        await manager.Client.Author.SubmitAndWatchExtrinsicAsync(
+            WalletManager.GetInstance().ActionExtrinsicUpdate,
+            transferKeepAlive,
+            senderAccount, new ChargeAssetTxPayment(0, 0), 64, CancellationToken.None);
     }
 
     public async Task Connect(bool flag)
@@ -191,7 +202,9 @@ public class WalletController : Singleton<WalletController>
                 var accountId32 = new AccountId32();
                 accountId32.Create(Utils.GetPublicKeyFrom(WalletManager.GetInstance().Account.Value));
                 var accountInfo = await manager.Client.SystemStorage.Account(accountId32, CancellationToken.None);
-                if (accountInfo != null && accountInfo.Data != null)
+                
+                // AccountInfo.Data will be null before the the first transfer
+                if (accountInfo != null && accountInfo.Data != null) 
                 {
                     txtWalletBalance.text = BigInteger.Divide(accountInfo.Data.Free.Value, BigInteger.Pow(10, 12)).ToString("0.000000");
                 }
