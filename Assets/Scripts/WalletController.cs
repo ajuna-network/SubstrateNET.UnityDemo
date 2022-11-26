@@ -52,8 +52,6 @@ public class WalletController : Singleton<WalletController>
         _currentBlockData = null;
         _finalBlockHash = null;
         _finalBlockData = null;
-
-        WalletManager.GetInstance().ExtrinsicStateUpdateEvent += UpdateExtrinsics;
     }
 
     // Update is called once per frame
@@ -75,12 +73,6 @@ public class WalletController : Singleton<WalletController>
         }
 
         TransferBalance(WalletManager.GetInstance().Alice, WalletManager.GetInstance().Account, 100000000000000);
-    }
-
-    public async void OnButtonLessClicked()
-    {
-        Debug.Log("No need big bag, take my coins back!");
-        TransferBalance(WalletManager.GetInstance().Account, WalletManager.GetInstance().Alice, 300000000000);
     }
 
     public async void TransferBalance(Account senderAccount,Account recipientAccount,  long amount)

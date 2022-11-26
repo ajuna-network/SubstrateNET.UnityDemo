@@ -15,20 +15,11 @@ public class WalletManager : Singleton<WalletManager>
     public MiniSecret MiniSecretAlice => new MiniSecret(Utils.HexToByteArray("0xe5be9a5092b81bca64be81d212e7f2f9eba183bb7a90954f7b76361f6edb5c0a"), ExpandMode.Ed25519);
     public Account Alice => Account.Build(KeyType.Sr25519, MiniSecretAlice.ExpandToSecret().ToBytes(), MiniSecretAlice.GetPair().Public.Key);
 
-    public event ExtrinsicStateUpdate ExtrinsicStateUpdateEvent;
-
     [SerializeField]
     public string WalletName = "wallet";
 
     [SerializeField]
     public string NodeUrl = "ws://127.0.0.1:9944";
-
-    [SerializeField]
-    public string RestUrl = "http://127.0.0.1:61752";
-
-    [SerializeField]
-    public string SubscriptionUrl = "http://127.0.0.1:61752/ws";
-
     public Account Account => _wallet.Account;
 
     private Wallet _wallet;
@@ -40,8 +31,6 @@ public class WalletManager : Singleton<WalletManager>
     private Random _random;
 
     private HttpClient _httpClient;
-
-    private BaseSubscriptionClient _subscriptionClient;
 
     private Client _serviceClient;
 
@@ -58,20 +47,6 @@ public class WalletManager : Singleton<WalletManager>
         _random = new Random();
 
         _client = new SubstrateClientExt(new Uri(NodeUrl));
-
-        _subscriptionClient = new BaseSubscriptionClient(new ClientWebSocket());
-
-        var httpClient = new HttpClient()
-        {
-            BaseAddress = new Uri(RestUrl)
-        };
-        _serviceClient = new Client(httpClient, _subscriptionClient);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     internal string CreateMnemonicSeed()
