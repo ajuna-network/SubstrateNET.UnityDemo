@@ -104,7 +104,6 @@ public class WalletController : Singleton<WalletController>
         try
         {
             await manager.Client.Author.SubmitAndWatchExtrinsicAsync(
-                //WalletManager.GetInstance().ActionExtrinsicUpdate,
                 OnExtrinsicStateUpdateEvent,
                 transferKeepAlive,
                 senderAccount, new ChargeAssetTxPayment(0, 0), 64, CancellationToken.None).ConfigureAwait(false);
@@ -189,8 +188,6 @@ public class WalletController : Singleton<WalletController>
         txtWalletName.text = WalletManager.GetInstance().WalletName;
         txtWalletAddress.text = WalletManager.GetInstance().Account.Value;
         
-        // _counter++;
-        // txtWalletState.text = _counter.ToString();
         if (_isPolling)
         {
             return;
@@ -247,24 +244,21 @@ public class WalletController : Singleton<WalletController>
     private void OnExtrinsicStateUpdateEvent(string subscriptionId, ExtrinsicStatus extrinsicStatus)
     {
         var state = "Unknown";
-        var value = 0;
+
         switch (extrinsicStatus.ExtrinsicState)
         {
             case ExtrinsicState.None:
                 if (extrinsicStatus.InBlock?.Value.Length > 0)
                 {
                     state = "InBlock";
-                    value = 5;
                 }
                 else if (extrinsicStatus.Finalized?.Value.Length > 0)
                 {
                     state = "Finalized";
-                    value = 6;
                 }
                 else
                 {
                     state = "None";
-                    value = 0;
                 }
                 break;
 
@@ -274,17 +268,14 @@ public class WalletController : Singleton<WalletController>
 
             case ExtrinsicState.Ready:
                 state = "Ready";
-                value = 2;
                 break;
 
             case ExtrinsicState.Dropped:
                 state = "Dropped";
-                value = 0;
                 break;
 
             case ExtrinsicState.Invalid:
                 state = "Invalid";
-                value = 0;
                 break;
         }
 

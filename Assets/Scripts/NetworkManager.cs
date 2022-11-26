@@ -6,12 +6,7 @@ using Schnorrkel.Keys;
 using SubstrateNET.NetApi.Generated;
 using SubstrateNET.RestClient;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public delegate void ExtrinsicStateUpdate(string subscriptionId, ExtrinsicStatus extrinsicUpdate);
@@ -25,7 +20,6 @@ public class NetworkManager : MonoBehaviour
     public MiniSecret MiniSecretBob => new MiniSecret(Utils.HexToByteArray("0x398f0c28f98885e046333d4a41c19cee4c37368a9832c6502f6cfd182e2aef89"), ExpandMode.Ed25519);
     public Account Bob => Account.Build(KeyType.Sr25519, MiniSecretBob.ExpandToSecret().ToBytes(), MiniSecretBob.GetPair().Public.Key);
 
-    public event ExtrinsicStateUpdate ExtrinsicStateUpdateEvent;
 
     [SerializeField]
     public string WalletName = "wallet";
@@ -33,11 +27,6 @@ public class NetworkManager : MonoBehaviour
     [SerializeField]
     public string NodeUrl = "ws://127.0.0.1:9944";
 
-    [SerializeField]
-    public string RestUrl = "http://127.0.0.1:61752";
-
-    [SerializeField]
-    public string SubscriptionUrl = "http://127.0.0.1:61752/ws";
 
     public Wallet Wallet;
 
@@ -67,13 +56,6 @@ public class NetworkManager : MonoBehaviour
 
         _client = new SubstrateClientExt(new Uri(NodeUrl));
 
-        _subscriptionClient = new BaseSubscriptionClient(new ClientWebSocket());
-
-        var httpClient = new HttpClient()
-        {
-            BaseAddress = new Uri(RestUrl)
-        };
-        _serviceClient = new Client(httpClient, _subscriptionClient);
     }
 
     // Update is called once per frame
@@ -82,13 +64,4 @@ public class NetworkManager : MonoBehaviour
         
     }
 
-    /// <summary>
-    /// Simple extrinsic tester
-    /// </summary>
-    /// <param name="subscriptionId"></param>
-    /// <param name="extrinsicUpdate"></param>
-    public void ActionExtrinsicUpdate(string subscriptionId, ExtrinsicStatus extrinsicUpdate)
-    {
-        ExtrinsicStateUpdateEvent?.Invoke(subscriptionId, extrinsicUpdate);
-    }
 }

@@ -1,18 +1,12 @@
 using Ajuna.NetApi;
-using Ajuna.NetApi.Model.Rpc;
 using Ajuna.NetApi.Model.Types;
 using Ajuna.NetWallet;
 using Schnorrkel.Keys;
 using SubstrateNET.NetApi.Generated;
 using SubstrateNET.RestClient;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = System.Random;
 
@@ -78,16 +72,6 @@ public class WalletManager : Singleton<WalletManager>
     void Update()
     {
 
-    }
-
-    /// <summary>
-    /// Simple extrinsic tester
-    /// </summary>
-    /// <param name="subscriptionId"></param>
-    /// <param name="extrinsicUpdate"></param>
-    public void ActionExtrinsicUpdate(string subscriptionId, ExtrinsicStatus extrinsicUpdate)
-    {
-        ExtrinsicStateUpdateEvent?.Invoke(subscriptionId, extrinsicUpdate);
     }
 
     internal string CreateMnemonicSeed()

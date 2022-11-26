@@ -1,14 +1,5 @@
-using Ajuna.NetApi.Model.Extrinsics;
-using Ajuna.NetApi.Model.Rpc;
-using Ajuna.NetApi.Model.Types;
-using Ajuna.NetApi.Model.Types.Base;
-using Ajuna.NetApi.Model.Types.Primitive;
+
 using SubstrateNET.NetApi.Generated.Model.sp_core.crypto;
-using SubstrateNET.NetApi.Generated.Model.sp_runtime.multiaddress;
-using SubstrateNET.NetApi.Generated.Storage;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
@@ -35,7 +26,6 @@ public class MenuController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Network.ExtrinsicStateUpdateEvent += OnExtrinsicStateUpdateEvent;
     }
 
     // Update is called once per frame
@@ -157,74 +147,6 @@ public class MenuController : MonoBehaviour
 
         BalanceFiller++;
         BalanceFiller %= 7;
-    }
-
-    public void OnClickBtnFaucet()
-    {
-        var accountId32 = new AccountId32();
-        accountId32.Create(Network.Bob.Bytes);
-
-        var multiAddressBob = new EnumMultiAddress();
-        multiAddressBob.Create(MultiAddress.Id, accountId32);
-
-        var amount = new BaseCom<U128>();
-        amount.Create(100000);
-
-        var chargeAssetTx = new ChargeAssetTxPayment(0,0);
-
-        var extrinsicMethod = BalancesCalls.Transfer(multiAddressBob, amount);
-        var subscription = Network.Client.Author.SubmitAndWatchExtrinsicAsync(Network.ActionExtrinsicUpdate, extrinsicMethod, Network.Alice, chargeAssetTx, 64, CancellationToken.None);
-    }
-
-    private void OnExtrinsicStateUpdateEvent(string subscriptionId, ExtrinsicStatus extrinsicStatus)
-    {
-        var state = "Unknown";
-        var value = 0;
-        switch (extrinsicStatus.ExtrinsicState)
-        {
-            case ExtrinsicState.None:
-                if (extrinsicStatus.InBlock?.Value.Length > 0)
-                {
-                    state = "InBlock";
-                    value = 5;
-                }
-                else if (extrinsicStatus.Finalized?.Value.Length > 0)
-                {
-                    state = "Finalized";
-                    value = 6;
-                }
-                else
-                {
-                    state = "None";
-                    value = 0;
-                }
-                break;
-
-            case ExtrinsicState.Future:
-                state = "Future";
-                break;
-
-            case ExtrinsicState.Ready:
-                state = "Ready";
-                value = 2;
-                break;
-
-            case ExtrinsicState.Dropped:
-                state = "Dropped";
-                value = 0;
-                break;
-
-            case ExtrinsicState.Invalid:
-                state = "Invalid";
-                value = 0;
-                break;
-        }
-
-        UnityMainThreadDispatcher.DispatchAsync(() =>
-        {
-            TxtState.text = state;
-            PgbStateFiller.rectTransform.localScale = new Vector3((float)value / 6, 1f, 1f);
-        });
     }
 
 }
