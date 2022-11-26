@@ -11,6 +11,7 @@ using System;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using StreamJsonRpc;
 using TMPro;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ public class WalletController : Singleton<WalletController>
 
     public TextMeshProUGUI txtBlockNumber, txtPeers, txtName;
 
-    public TextMeshProUGUI txtWalletName, txtWalletAddress, txtWalletBalance;
+    public TextMeshProUGUI txtWalletName, txtWalletAddress, txtWalletBalance, txtWalletState;
 
     public UnityEngine.UI.Slider slider;
 
@@ -35,6 +36,8 @@ public class WalletController : Singleton<WalletController>
     private BlockData _currentBlockData, _finalBlockData;
 
     private bool _isPolling = false;
+
+    private static int _counter;
 
     void Awake()
     {
@@ -77,7 +80,7 @@ public class WalletController : Singleton<WalletController>
     public async void OnButtonLessClicked()
     {
         Debug.Log("No need big bag, take my coins back!");
-        TransferBalance(WalletManager.GetInstance().Account, WalletManager.GetInstance().Alice, 10000000000);
+        TransferBalance(WalletManager.GetInstance().Account, WalletManager.GetInstance().Alice, 300000000000);
     }
 
     public async void TransferBalance(Account senderAccount,Account recipientAccount,  long amount)
@@ -97,11 +100,31 @@ public class WalletController : Singleton<WalletController>
         baseCampactU128.Create(amount);
         
         var transferKeepAlive = BalancesCalls.TransferKeepAlive(multiAddress, baseCampactU128);
-        
-        await manager.Client.Author.SubmitAndWatchExtrinsicAsync(
-            WalletManager.GetInstance().ActionExtrinsicUpdate,
-            transferKeepAlive,
-            senderAccount, new ChargeAssetTxPayment(0, 0), 64, CancellationToken.None);
+
+        try
+        {
+            await manager.Client.Author.SubmitAndWatchExtrinsicAsync(
+                //WalletManager.GetInstance().ActionExtrinsicUpdate,
+                OnExtrinsicStateUpdateEvent,
+                transferKeepAlive,
+                senderAccount, new ChargeAssetTxPayment(0, 0), 64, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            var errorMessage = "An error occured";
+            
+            if (ex is RemoteInvocationException)
+            {
+                errorMessage = ((RemoteInvocationException) ex).Message;
+            }
+            
+            UnityMainThreadDispatcher.DispatchAsync(() =>
+            {
+                txtWalletState.text = errorMessage;
+                txtWalletState.color = Color.red;
+            });
+        }
+
     }
 
     public async Task Connect(bool flag)
@@ -164,7 +187,9 @@ public class WalletController : Singleton<WalletController>
 
         txtWalletName.text = WalletManager.GetInstance().WalletName;
         txtWalletAddress.text = WalletManager.GetInstance().Account.Value;
-
+        
+        // _counter++;
+        // txtWalletState.text = _counter.ToString();
         if (_isPolling)
         {
             return;
@@ -216,6 +241,57 @@ public class WalletController : Singleton<WalletController>
         }
 
         _isPolling = false;
+    }
+    
+    private void OnExtrinsicStateUpdateEvent(string subscriptionId, ExtrinsicStatus extrinsicStatus)
+    {
+        var state = "Unknown";
+        var value = 0;
+        switch (extrinsicStatus.ExtrinsicState)
+        {
+            case ExtrinsicState.None:
+                if (extrinsicStatus.InBlock?.Value.Length > 0)
+                {
+                    state = "InBlock";
+                    value = 5;
+                }
+                else if (extrinsicStatus.Finalized?.Value.Length > 0)
+                {
+                    state = "Finalized";
+                    value = 6;
+                }
+                else
+                {
+                    state = "None";
+                    value = 0;
+                }
+                break;
+
+            case ExtrinsicState.Future:
+                state = "Future";
+                break;
+
+            case ExtrinsicState.Ready:
+                state = "Ready";
+                value = 2;
+                break;
+
+            case ExtrinsicState.Dropped:
+                state = "Dropped";
+                value = 0;
+                break;
+
+            case ExtrinsicState.Invalid:
+                state = "Invalid";
+                value = 0;
+                break;
+        }
+
+        UnityMainThreadDispatcher.DispatchAsync(() =>
+        {
+            txtWalletState.text = state;
+            txtWalletState.color = Color.black;
+        });
     }
 
 }
