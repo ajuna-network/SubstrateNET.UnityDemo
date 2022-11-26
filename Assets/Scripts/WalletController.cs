@@ -122,6 +122,7 @@ public class WalletController : Singleton<WalletController>
             {
                 txtWalletState.text = errorMessage;
                 txtWalletState.color = Color.red;
+                txtWalletState.fontSize = 40;
             });
         }
 
@@ -291,6 +292,9 @@ public class WalletController : Singleton<WalletController>
         {
             txtWalletState.text = state;
             txtWalletState.color = Color.black;
+            txtWalletState.fontSize = 40;
+            Debug.Log("Font Size: " + txtWalletState.fontSize);
+      
         });
     }
 
