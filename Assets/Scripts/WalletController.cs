@@ -146,7 +146,7 @@ public class WalletController : Singleton<WalletController>
             CancelInvoke("PollAllHeadsAsync");
         }
     }
-
+    
     public async void NodeInfoAsync()
     {
         var systemProperties = await manager.Client.System.PropertiesAsync(CancellationToken.None);
@@ -155,25 +155,25 @@ public class WalletController : Singleton<WalletController>
             // systemProperties {"Ss58Format":0,"TokenDecimals":0,"TokenSymbol":null}
             //Debug.Log($"systemProperties {systemProperties}");
         }
-
+    
         var name = await manager.Client.System.NameAsync(CancellationToken.None);
         if (name != null)
         {
             txtName.text = name;
         }
     }
-
+    
     public async void SystemHealthAsync()
     {
         var systemHealth = await manager.Client.System.HealthAsync(CancellationToken.None);
         if (systemHealth != null)
         {
-            // systemHealth {"IsSyncing":false,"Peers":0,"ShouldHavePeers":false}
-            //Debug.Log($"systemHealth {systemHealth}");
             txtPeers.text = systemHealth.Peers.ToString();
         }
     }
-
+    
+    
+    // Gets block info and current wallet account balance 
     public async void PollAllHeadsAsync()
     {
 
@@ -218,7 +218,7 @@ public class WalletController : Singleton<WalletController>
                 accountId32.Create(Utils.GetPublicKeyFrom(WalletManager.GetInstance().Account.Value));
                 var accountInfo = await manager.Client.SystemStorage.Account(accountId32, CancellationToken.None);
                 
-                // AccountInfo.Data will be null before the the first transfer
+                // AccountInfo.Data will be null before the first transfer
                 if (accountInfo != null && accountInfo.Data != null) 
                 {
                     txtWalletBalance.text = BigInteger.Divide(accountInfo.Data.Free.Value, BigInteger.Pow(10, 12)).ToString("0.000000");
@@ -233,6 +233,11 @@ public class WalletController : Singleton<WalletController>
         _isPolling = false;
     }
     
+    /// <summary>
+    /// Callback sent together with the extrinsic
+    /// </summary>
+    /// <param name="subscriptionId"></param>
+    /// <param name="extrinsicStatus"></param>
     private void OnExtrinsicStateUpdateEvent(string subscriptionId, ExtrinsicStatus extrinsicStatus)
     {
         var state = "Unknown";
