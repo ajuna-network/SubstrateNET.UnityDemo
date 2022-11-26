@@ -1885,6 +1885,7 @@ MonoBehaviour:
   txtWalletName: {fileID: 5247807234664917944}
   txtWalletAddress: {fileID: 151589803}
   txtWalletBalance: {fileID: 5247807235107007289}
+  txtWalletState: {fileID: 1503877175}
   slider: {fileID: 5373189216168321109}
   imgConnection: {fileID: 5373189215712683050}
 --- !u!114 &1148801452
@@ -2267,7 +2268,7 @@ GameObject:
   - component: {fileID: 1503877176}
   - component: {fileID: 1503877175}
   m_Layer: 0
-  m_Name: TxtState
+  m_Name: TxtWalletState
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
