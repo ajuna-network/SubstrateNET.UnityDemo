@@ -6,7 +6,6 @@ using SubstrateNET.NetApi.Generated;
 using SubstrateNET.RestClient;
 using System;
 using System.Net.Http;
-using System.Net.WebSockets;
 using UnityEngine;
 using Random = System.Random;
 
