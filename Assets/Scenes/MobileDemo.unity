@@ -1880,7 +1880,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1148801453}
-  audioClip: {fileID: 8300000, guid: 2c55b093a2cd24cf796c21c12f1bb5c3, type: 3}
   IsPooling: 0
   txtBlockNumber: {fileID: 5373189215625012621}
   txtPeers: {fileID: 5373189216338203434}
