@@ -18,6 +18,11 @@ using UnityEngine;
 public class WalletController : Singleton<WalletController>
 {
     public WalletManager manager => WalletManager.GetInstance();
+    
+    // Declare AudioSource, Delegate and Event
+    public AudioSource audioSource;
+    delegate void BalanceTransferedHandler();
+    event BalanceTransferedHandler BalanceTransferedEvent;
 
     public bool IsPooling = false;
 
@@ -39,6 +44,12 @@ public class WalletController : Singleton<WalletController>
 
     private static int _counter;
 
+    
+    private void PlaySound()
+    {
+        audioSource.Play() ;
+    }
+    
     void Awake()
     {
         base.Awake();
@@ -52,6 +63,9 @@ public class WalletController : Singleton<WalletController>
         _currentBlockData = null;
         _finalBlockHash = null;
         _finalBlockData = null;
+
+        // Hooking up Event
+        BalanceTransferedEvent += PlaySound;
     }
 
     // Update is called once per frame
@@ -59,6 +73,13 @@ public class WalletController : Singleton<WalletController>
     {
 
     }
+    
+    void OnDestroy()
+    {
+        // Detach Event
+        BalanceTransferedEvent -= PlaySound;
+    }
+
 
     private void UpdateExtrinsics(string subscriptionId, ExtrinsicStatus extrinsicUpdate)
     {
@@ -83,6 +104,7 @@ public class WalletController : Singleton<WalletController>
 
     public async void TransferBalance(Account senderAccount,Account recipientAccount,  long amount)
     {
+     
         if (!manager.Client.IsConnected)
         {
             Debug.Log("Not connected!");
@@ -258,6 +280,15 @@ public class WalletController : Singleton<WalletController>
                 else if (extrinsicStatus.Finalized?.Value.Length > 0)
                 {
                     state = "Finalized";
+                    
+                    // The event has to be fired on the UI thread 
+                    UnityMainThreadDispatcher.DispatchAsync(() =>
+                    {
+                        if (BalanceTransferedEvent != null)
+                        {
+                            BalanceTransferedEvent();
+                        }
+                    });
                 }
                 else
                 {
@@ -287,8 +318,6 @@ public class WalletController : Singleton<WalletController>
             txtWalletState.text = state;
             txtWalletState.color = Color.black;
             txtWalletState.fontSize = 40;
-            Debug.Log("Font Size: " + txtWalletState.fontSize);
-      
         });
     }
 

@@ -3,7 +3,18 @@ guid: f298124a61420d74898ff9a1c7d0f0d8
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - audioSource: {instanceID: 0}
+  - audioClip: {fileID: 8300000, guid: 2c55b093a2cd24cf796c21c12f1bb5c3, type: 3}
+  - txtBlockNumber: {instanceID: 0}
+  - txtPeers: {instanceID: 0}
+  - txtName: {instanceID: 0}
+  - txtWalletName: {instanceID: 0}
+  - txtWalletAddress: {instanceID: 0}
+  - txtWalletBalance: {instanceID: 0}
+  - txtWalletState: {instanceID: 0}
+  - slider: {instanceID: 0}
+  - imgConnection: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
