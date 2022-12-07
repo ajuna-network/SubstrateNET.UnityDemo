@@ -4,7 +4,7 @@
 
 Implementation of a Ajuna.NetWallet in a Unity app where the following is possible:
 
-- Create Wallet and store in the local file storage
+- Create a Wallet and store in the local file storage
 - Restore wallet from file storage
 - Transfer Balance from Alice to the newly created wallet account
 - Information about the state of the executed extrinsic.
@@ -20,7 +20,7 @@ To run this demo, you must have Unity installed on your computer. You can downlo
 - Open SubstrateDemo scene
 - Play project
 
-Walkthrough of the impelementation can also be found in the following [video](https://www.loom.com/share/09c93e0bc1c1452b94b9367f15da9cbe). 
+A walkthrough of the implementation can also be found in the following [video](https://www.loom.com/share/09c93e0bc1c1452b94b9367f15da9cbe). 
 
 
 ## Getting started with Unity and Ajuna.SDK
